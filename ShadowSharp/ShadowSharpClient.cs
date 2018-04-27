@@ -26,8 +26,15 @@ namespace ShadowSharp
             if(clan_type != null)clan = (int)clan_type;
             var response = await httpClient.GetAsync(new Uri($"{httpClient.BaseAddress}/cards?format=json&lang={this.LangCode}&clan={clan}"));
             if (!response.IsSuccessStatusCode) return null;
-            var content = JObject.Parse(await response.Content.ReadAsStringAsync()).SelectToken("data").SelectToken("cards").ToString();
-            var data = JsonConvert.DeserializeObject<IEnumerable<Card>>(content);
+            var cont = await response.Content.ReadAsStringAsync();
+            var resdata = JsonConvert.DeserializeObject<ApiResponse>(cont);
+            if (resdata.Errors != null)
+            {
+                ClientErrored?.Invoke(this, resdata.Errors);
+                return null;
+            }
+            var obj = ((JObject)resdata.PayloadData).SelectToken("cards");
+            var data = JsonConvert.DeserializeObject<IEnumerable<Card>>(obj.ToString());
             return data;
         }
 
@@ -41,7 +48,7 @@ namespace ShadowSharp
                 ClientErrored?.Invoke(this, resdata.Errors);
                 return null;
             }
-            var didata = JsonConvert.DeserializeObject<DeckImport>(resdata.PayloadData);
+            var didata = JsonConvert.DeserializeObject<DeckImport>((string)resdata.PayloadData);
             response = await httpClient.GetAsync(new Uri($"{httpClient.BaseAddress}/deck?format=json&lang={this.LangCode}&hash={didata.DeckHash}"));
             if (!response.IsSuccessStatusCode) return null;
             var content = JsonConvert.DeserializeObject<ApiResponse>(await response.Content.ReadAsStringAsync());
@@ -50,7 +57,7 @@ namespace ShadowSharp
                 ClientErrored?.Invoke(this, resdata.Errors);
                 return null;
             }
-            var data = JsonConvert.DeserializeObject<CardDeck>(content.PayloadData);
+            var data = JsonConvert.DeserializeObject<CardDeck>((string)content.PayloadData);
             data.DeckHash = didata.DeckHash;
             data.LangCode = this.LangCode;
             return data;
