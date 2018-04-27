@@ -9,7 +9,9 @@ namespace ShadowSharp
 {
     public class ShadowSharpClient
     {
-        private string LangCode { get; set; }
+        public event ClientErroredDelegate ClientErrored;
+
+        internal string LangCode { get; set; }
         private HttpClient httpClient = new HttpClient();
 
         public ShadowSharpClient(string lang = "en")
@@ -31,16 +33,26 @@ namespace ShadowSharp
 
         public async Task<CardDeck> GetCardDeckAsync(string deck_code)
         {
-            var response = await httpClient.GetAsync(new Uri($"{httpClient.BaseAddress}/deck/import?format=json&deck_code={deck_code}"));
+            var response = await httpClient.GetAsync(new Uri($"{httpClient.BaseAddress}/deck/import?format=json&lang={this.LangCode}&deck_code={deck_code}"));
             if (!response.IsSuccessStatusCode) return null;
-            var dicontent = JObject.Parse(await response.Content.ReadAsStringAsync()).SelectToken("data").ToString();
-            var didata = JsonConvert.DeserializeObject<DeckImport>(dicontent);
+            var resdata = JsonConvert.DeserializeObject<ApiResponse>(await response.Content.ReadAsStringAsync());
+            if(resdata.Errors != null)
+            {
+                ClientErrored?.Invoke(this, resdata.Errors);
+                return null;
+            }
+            var didata = JsonConvert.DeserializeObject<DeckImport>(resdata.PayloadData);
             response = await httpClient.GetAsync(new Uri($"{httpClient.BaseAddress}/deck?format=json&lang={this.LangCode}&hash={didata.DeckHash}"));
             if (!response.IsSuccessStatusCode) return null;
-            var content = await response.Content.ReadAsStringAsync();
-            var obj = JObject.Parse(content).SelectToken("data").SelectToken("deck").ToString();
-            var data = JsonConvert.DeserializeObject<CardDeck>(obj);
+            var content = JsonConvert.DeserializeObject<ApiResponse>(await response.Content.ReadAsStringAsync());
+            if (content.Errors != null)
+            {
+                ClientErrored?.Invoke(this, resdata.Errors);
+                return null;
+            }
+            var data = JsonConvert.DeserializeObject<CardDeck>(content.PayloadData);
             data.DeckHash = didata.DeckHash;
+            data.LangCode = this.LangCode;
             return data;
         }
 
@@ -56,4 +68,5 @@ namespace ShadowSharp
             return (response.IsSuccessStatusCode) ? $"https://shadowverse-portal.com/public/assets/image/deckbuilder/{this.LangCode}/classes/{(int)clan}/character.png?20180426b" : null;
         }
     }
+    public delegate void ClientErroredDelegate(object sender, IEnumerable<Error> e);
 }
