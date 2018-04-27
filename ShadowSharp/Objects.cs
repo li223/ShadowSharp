@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,13 +8,16 @@ namespace ShadowSharp
     public class CardDeck
     {
         [JsonIgnore]
+        internal string LangCode { get; set; }
+
+        [JsonIgnore]
         public string DeckHash { get; internal set; }
 
         [JsonIgnore]
-        public string DeckLink { get { return $"https://shadowverse-portal.com/deck/{DeckHash}"; } }
+        public string DeckLink { get { return $"https://shadowverse-portal.com/deck/{DeckHash}?lang={LangCode}"; } }
 
         [JsonIgnore]
-        public string DeckImage { get { return $"https://shadowverse-portal.com/image/{DeckHash}"; } }
+        public string DeckImage { get { return $"https://shadowverse-portal.com/image/{DeckHash}?lang={LangCode}"; } }
 
         [JsonProperty("deck_format")]
         public int DeckFormat { get; private set; }
@@ -24,6 +27,42 @@ namespace ShadowSharp
 
         [JsonProperty("cards")]
         public IEnumerable<Card> Cards { get; private set; }
+    }
+
+    public class ApiResponse
+    {
+        [JsonProperty("data_headers")]
+        public DataHeader Header { get; private set; }
+
+        [JsonProperty("data")]
+        public string PayloadData { get; private set; }
+
+        [JsonProperty("errors")]
+        public IEnumerable<Error> Errors { get; private set; }
+    }
+
+    public class DataHeader
+    {
+        [JsonProperty("udid")]
+        public bool UdId { get; private set; }
+
+        [JsonProperty("viewer_id")]
+        public int ViewerId { get; private set; }
+
+        [JsonProperty("sid")]
+        public string SId { get; private set; }
+
+        [JsonProperty("servertime")]
+        public DateTimeOffset ServerTime { get; private set; }
+
+        [JsonProperty("result_code")]
+        public int ResultCode { get; private set; }
+    }
+
+    public class Error
+    {
+        [JsonProperty("")]
+        public string EEEEEEEEEH { get; set; }
     }
 
     public class DeckImport
