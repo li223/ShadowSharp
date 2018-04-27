@@ -35,7 +35,7 @@ namespace ShadowSharp
         public DataHeader Header { get; private set; }
 
         [JsonProperty("data")]
-        public string PayloadData { get; private set; }
+        public object PayloadData { get; private set; }
 
         [JsonProperty("errors")]
         public IEnumerable<Error> Errors { get; private set; }
@@ -53,7 +53,7 @@ namespace ShadowSharp
         public string SId { get; private set; }
 
         [JsonProperty("servertime")]
-        public DateTimeOffset ServerTime { get; private set; }
+        public ulong ServerTime { get; private set; }
 
         [JsonProperty("result_code")]
         public int ResultCode { get; private set; }
@@ -61,8 +61,10 @@ namespace ShadowSharp
 
     public class Error
     {
-        [JsonProperty("")]
-        public string EEEEEEEEEH { get; set; }
+        [JsonProperty("type")]
+        public ErrorType Type { get; private set; }
+        [JsonProperty("message")]
+        public string Message { get; private set; }
     }
 
     public class DeckImport
@@ -217,4 +219,11 @@ namespace ShadowSharp
         HavenCraft = 7,
         PortalCraft = 8
     }
+
+    public enum ErrorType
+    {
+        INVALID_DECK_CODE = 0,
+        UNKNOWN = 1
+    }
+
 }
