@@ -19,7 +19,7 @@ namespace ShadowSharp
         [JsonProperty("deck_format")]
         public int DeckFormat { get; private set; }
 
-        [JsonProperty("clan")]
+        [JsonProperty("clan", NullValueHandling = NullValueHandling.Ignore)]
         public ClanType ClanType { get; private set; }
 
         [JsonProperty("cards")]
@@ -34,7 +34,7 @@ namespace ShadowSharp
         [JsonProperty("text")]
         public string Text { get; private set; }
 
-        [JsonProperty("clan")]
+        [JsonProperty("clan", NullValueHandling = NullValueHandling.Ignore)]
         public ClanType ClanType { get; private set; }
 
         [JsonProperty("hash")]
@@ -67,7 +67,7 @@ namespace ShadowSharp
         [JsonProperty("char_type")]
         public CharType CharType { get; private set; }
 
-        [JsonProperty("clan")]
+        [JsonProperty("clan", NullValueHandling = NullValueHandling.Ignore)]
         public ClanType ClanType { get; private set; }
 
         [JsonProperty("tribe_name")]
