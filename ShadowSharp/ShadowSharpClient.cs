@@ -41,5 +41,11 @@ namespace ShadowSharp
             data.DeckHash = didata.DeckHash;
             return data;
         }
+
+        public async Task<string> GetCardImageAsync(long card_id)
+        {
+            var response = await httpClient.GetAsync(new Uri($"https://shadowverse-portal.com/image/card/{this.LangCode}/C_{card_id}.png?20180426b"));
+            return (response.IsSuccessStatusCode)? $"https://shadowverse-portal.com/image/card/{this.LangCode}/C_{card_id}.png?20180426b" : null;
+        }
     }
 }
