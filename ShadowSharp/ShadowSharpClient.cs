@@ -20,7 +20,8 @@ namespace ShadowSharp
 
         public async Task<IEnumerable<Card>> GetCardsAsync(ClanType? clan_type = null)
         {
-            int? clan = (int)clan_type;
+            int? clan = null;
+            if(clan_type != null)clan = (int)clan_type;
             var response = await httpClient.GetAsync(new Uri($"{httpClient.BaseAddress}/cards?format=json&lang={this.LangCode}&clan={clan}"));
             if (!response.IsSuccessStatusCode) return null;
             var content = JObject.Parse(await response.Content.ReadAsStringAsync()).SelectToken("data").SelectToken("cards").ToString();
