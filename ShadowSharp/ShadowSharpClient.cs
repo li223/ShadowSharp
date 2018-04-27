@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -18,11 +18,12 @@ namespace ShadowSharp
             httpClient.BaseAddress = new Uri("https://shadowverse-portal.com/api/v1");
         }
 
-        public async Task<IEnumerable<Card>> GetCardsAsync(int? clan = null)
+        public async Task<IEnumerable<Card>> GetCardsAsync(ClanType? clan_type = null)
         {
+            int? clan = (int)clan_type;
             var response = await httpClient.GetAsync(new Uri($"{httpClient.BaseAddress}/cards?format=json&lang={this.LangCode}&clan={clan}"));
             if (!response.IsSuccessStatusCode) return null;
-            var content = JObject.Parse(await response.Content.ReadAsStringAsync()).SelectToken("data").ToString();
+            var content = JObject.Parse(await response.Content.ReadAsStringAsync()).SelectToken("data").SelectToken("cards").ToString();
             var data = JsonConvert.DeserializeObject<IEnumerable<Card>>(content);
             return data;
         }
