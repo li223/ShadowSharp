@@ -47,5 +47,11 @@ namespace ShadowSharp
             var response = await httpClient.GetAsync(new Uri($"https://shadowverse-portal.com/image/card/{this.LangCode}/C_{card_id}.png?20180426b"));
             return (response.IsSuccessStatusCode)? $"https://shadowverse-portal.com/image/card/{this.LangCode}/C_{card_id}.png?20180426b" : null;
         }
+
+        public async Task<string> GetClassImageAsync(ClanType clan)
+        {
+            var response = await httpClient.GetAsync(new Uri($"https://shadowverse-portal.com/public/assets/image/deckbuilder/{this.LangCode}/classes/{(int)clan}/character.png?20180426b"));
+            return (response.IsSuccessStatusCode) ? $"https://shadowverse-portal.com/public/assets/image/deckbuilder/{this.LangCode}/classes/{(int)clan}/character.png?20180426b" : null;
+        }
     }
 }
