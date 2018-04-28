@@ -62,6 +62,12 @@ namespace ShadowSharp
             data.LangCode = this.LangCode;
             return data;
         }
+        
+        public async Task<string> GetCardLinkAsync(long card_id)
+        {
+            var response = await httpClient.GetAsync(new Uri($"https://shadowverse-portal.com/card/{card_id}?lang={this.LangCode}"));
+            return (response.IsSuccessStatusCode) ? $"https://shadowverse-portal.com/card/{card_id}?lang={this.LangCode}" : null;
+        }
 
         public async Task<string> GetCardImageAsync(long card_id)
         {
