@@ -28,14 +28,12 @@ namespace ShadowSharp
             if (!response.IsSuccessStatusCode) return null;
             var cont = await response.Content.ReadAsStringAsync();
             var resdata = JsonConvert.DeserializeObject<ApiResponse>(cont);
-            if (resdata.Errors != null)
+            if (resdata.PayloadData.Errors.Count > 0)
             {
-                ClientErrored?.Invoke(this, resdata.Errors);
+                ClientErrored?.Invoke(this, resdata.PayloadData.Errors);
                 return null;
             }
-            var obj = ((JObject)resdata.PayloadData).SelectToken("cards");
-            var data = JsonConvert.DeserializeObject<IEnumerable<Card>>(obj.ToString());
-            return data;
+            return resdata.PayloadData.Cards;
         }
 
         public async Task<CardDeck> GetCardDeckAsync(string deck_code)
@@ -43,22 +41,21 @@ namespace ShadowSharp
             var response = await httpClient.GetAsync(new Uri($"{httpClient.BaseAddress}/deck/import?format=json&lang={this.LangCode}&deck_code={deck_code}"));
             if (!response.IsSuccessStatusCode) return null;
             var resdata = JsonConvert.DeserializeObject<ApiResponse>(await response.Content.ReadAsStringAsync());
-            if(resdata.Errors != null)
+            if(resdata.PayloadData.Errors.Count > 0)
             {
-                ClientErrored?.Invoke(this, resdata.Errors);
+                ClientErrored?.Invoke(this, resdata.PayloadData.Errors);
                 return null;
             }
-            var didata = JsonConvert.DeserializeObject<DeckImport>((string)resdata.PayloadData);
-            response = await httpClient.GetAsync(new Uri($"{httpClient.BaseAddress}/deck?format=json&lang={this.LangCode}&hash={didata.DeckHash}"));
+            response = await httpClient.GetAsync(new Uri($"{httpClient.BaseAddress}/deck?format=json&lang={this.LangCode}&hash={resdata.PayloadData.DeckHash}"));
             if (!response.IsSuccessStatusCode) return null;
             var content = JsonConvert.DeserializeObject<ApiResponse>(await response.Content.ReadAsStringAsync());
-            if (content.Errors != null)
+            if (content.PayloadData.Errors.Count > 0)
             {
-                ClientErrored?.Invoke(this, resdata.Errors);
+                ClientErrored?.Invoke(this, resdata.PayloadData.Errors);
                 return null;
             }
-            var data = JsonConvert.DeserializeObject<CardDeck>((string)content.PayloadData);
-            data.DeckHash = didata.DeckHash;
+            var data = content.PayloadData.CardDeck;
+            data.DeckHash = resdata.PayloadData.DeckHash;
             data.LangCode = this.LangCode;
             return data;
         }

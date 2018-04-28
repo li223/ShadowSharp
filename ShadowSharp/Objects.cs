@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,22 +24,37 @@ namespace ShadowSharp
         public int DeckFormat { get; private set; }
 
         [JsonProperty("clan", NullValueHandling = NullValueHandling.Ignore)]
-        public ClanType ClanType { get; private set; }
+        public ClanType? ClanType { get; private set; }
 
         [JsonProperty("cards")]
-        public IEnumerable<Card> Cards { get; private set; }
+        public IReadOnlyList<Card> Cards { get; private set; }
     }
 
     public class ApiResponse
     {
-        [JsonProperty("data_headers")]
+        [JsonProperty("data_headers", NullValueHandling = NullValueHandling.Ignore)]
         public DataHeader Header { get; private set; }
 
-        [JsonProperty("data")]
-        public object PayloadData { get; private set; }
+        [JsonProperty("data", NullValueHandling = NullValueHandling.Ignore)]
+        public PayloadData PayloadData { get; private set; }
+    }
+
+    public class PayloadData
+    {
+        [JsonProperty("hash")]
+        public string DeckHash { get; private set; }
+
+        [JsonProperty("deck")]
+        public CardDeck CardDeck { get; private set; }
+
+        [JsonProperty("clan")]
+        public string Clan { get; private set; }
 
         [JsonProperty("errors")]
-        public IEnumerable<Error> Errors { get; private set; }
+        public IReadOnlyList<Error> Errors { get; private set; }
+
+        [JsonProperty("cards")]
+        public IReadOnlyList<Card> Cards { get; private set; }
     }
 
     public class DataHeader
@@ -62,7 +78,8 @@ namespace ShadowSharp
     public class Error
     {
         [JsonProperty("type")]
-        public ErrorType Type { get; private set; }
+        public string Type { get; private set; }
+
         [JsonProperty("message")]
         public string Message { get; private set; }
     }
@@ -76,7 +93,7 @@ namespace ShadowSharp
         public string Text { get; private set; }
 
         [JsonProperty("clan", NullValueHandling = NullValueHandling.Ignore)]
-        public ClanType ClanType { get; private set; }
+        public ClanType? ClanType { get; private set; }
 
         [JsonProperty("hash")]
         public string DeckHash { get; private set; }
@@ -219,11 +236,4 @@ namespace ShadowSharp
         HavenCraft = 7,
         PortalCraft = 8
     }
-
-    public enum ErrorType
-    {
-        INVALID_DECK_CODE = 0,
-        UNKNOWN = 1
-    }
-
 }
