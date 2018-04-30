@@ -101,6 +101,12 @@ namespace ShadowSharp
 
     public class Card
     {
+        [JsonIgnore]
+        public string Url { get { return $"https://shadowverse-portal.com/card/{this.Id}?lang={ShadowSharpClient.LangCode}"; } }
+
+        [JsonIgnore]
+        public string ImageUrl { get { return $"https://shadowverse-portal.com/image/card/{ShadowSharpClient.LangCode}/C_{this.Id}.png?20180426b"; } }
+
         [JsonProperty("card_id")]
         public long Id { get; private set; }
 
