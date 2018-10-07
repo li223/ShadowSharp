@@ -7,8 +7,7 @@ namespace Example
 {
     class Program
     {
-        static void Main(string[] args) => new Program().RunAsync().GetAwaiter().GetResult();
-        public async Task RunAsync()
+        static async Task Main(string[] args)
         {
             var client = new ShadowSharpClient();
             //Deck code is created via the game
