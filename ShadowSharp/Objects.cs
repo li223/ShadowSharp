@@ -107,6 +107,9 @@ namespace ShadowSharp
         [JsonIgnore]
         public string ImageUrl { get { return $"https://shadowverse-portal.com/image/card/{ShadowSharpClient.LangCode}/C_{this.Id}.png?20180426b"; } }
 
+        [JsonIgnore]
+        public string EvolvedImageUrl { get { return $"https://shadowverse-portal.com/image/card/{ShadowSharpClient.LangCode}/E_{this.Id}.png?20180426b"; } }
+
         [JsonProperty("card_id")]
         public long Id { get; private set; }
 
