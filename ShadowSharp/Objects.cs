@@ -1,8 +1,5 @@
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ShadowSharp
 {
@@ -105,10 +102,10 @@ namespace ShadowSharp
         public string Url { get { return $"https://shadowverse-portal.com/card/{this.Id}?lang={ShadowSharpClient.LangCode}"; } }
 
         [JsonIgnore]
-        public string ImageUrl { get { return $"https://shadowverse-portal.com/image/card/{ShadowSharpClient.LangCode}/C_{this.Id}.png?20180426b"; } }
+        public string ImageUrl { get { return $"https://shadowverse-portal.com/image/card/phase2/common/C/C_{this.Id}.png"; } }
 
         [JsonIgnore]
-        public string EvolvedImageUrl { get { return $"https://shadowverse-portal.com/image/card/{ShadowSharpClient.LangCode}/E_{this.Id}.png?20180426b"; } }
+        public string EvolvedImageUrl { get { return $"https://shadowverse-portal.com/image/card/phase2/common/E/E_{this.Id}.png"; } }
 
         [JsonProperty("card_id")]
         public long Id { get; private set; }
@@ -123,12 +120,6 @@ namespace ShadowSharp
         public string Name { get; private set; }
 
         [JsonProperty("is_foil")]
-        private int Is_Foil
-        {
-            set => IsFoil = (value != 0)? true : false;
-        }
-
-        [JsonIgnore]
         public bool IsFoil { get; private set; }
 
         [JsonProperty("char_type")]
